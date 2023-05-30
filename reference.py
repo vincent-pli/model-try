@@ -7,30 +7,33 @@ is_local = os.environ.get('local')
 task = os.environ.get('task')
 model = os.environ.get('model')
 
-if os.path.isdir("./pretrained/text-generation/gpt2"):
-    generator = pipeline('text-generation', model='./pretrained/text-generation/gpt2')
+dir_path = os.path.dirname(os.path.realpath(__file__))
+model_path = os.path.join(dir_path, "pretrained", task, model)
+generator = None
+
+print(model_path)
+if os.path.isdir(model_path):
+    generator = pipeline(task, model=model_path)
 else:
-    generator = pipeline('text-generation', model='gpt2')
-    os.makedirs("./pretrained/text-generation/gpt2")
-    generator.save_pretrained("./pretrained/text-generation/gpt2")
+    generator = pipeline(task, model=model)
+    os.makedirs(model_path)
+    generator.save_pretrained(model_path)
 
 
 set_seed(42)
 
 
 
-def generate(input):
-    txt = generator(input, max_length=30, num_return_sequences=1)
-    return txt[0]["generated_text"]
-
+# def generate(input):
+#     txt = generator(input, max_length=30, num_return_sequences=1)
+#     return txt
 
 import gradio as gr
 
-def greet(name):
-    return "Hello " + name + "!"
+gr.Interface.from_pipeline(generator).launch(server_port=8080)
 
-demo = gr.Interface(fn=generate, inputs=gr.Textbox(lines=2, placeholder="Name Here..."), outputs="text", title="AI Chatbot", description="Ask anything you want", theme="compact")
+# demo = gr.Interface(fn=generate, inputs=gr.Textbox(lines=2, placeholder="Name Here..."), outputs="text", title="AI Chatbot", description="Ask anything you want", theme="compact")
 
-demo.launch(server_port=8080) 
+# demo.launch(server_port=8080) 
 
 

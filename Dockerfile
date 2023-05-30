@@ -19,6 +19,6 @@ RUN pip3 install -r requirements.txt
 
 
 EXPOSE 8080
-COPY . .
+COPY reference.py .
 
 CMD ["python3", "reference.py"]
