@@ -16,7 +16,7 @@ class DockerLauncher(BaseModel):
 
         client = docker.from_env()
         container = client.containers.run(
-            "docker.io/vincentpli/mode-base:v0.2", detach=True, environment=environments, ports=ports, volumes = volumn)
+            "docker.io/vincentpli/mode-base:v0.3", detach=True, environment=environments, ports=ports, volumes = volumn)
         container.reload()
         print(container.ports)
         return { "address": container.ports, "id": container.id }
