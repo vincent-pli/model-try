@@ -9,8 +9,12 @@ class Launch(BaseModel):
     task: str
     model: str
 
+class Remove(BaseModel):
+    id: str
+
 app = FastAPI()
 
+launcher = DockerLauncher()
 
 def validate_task(task: str):
     if task in TASKS_SUPPORTED:
@@ -23,9 +27,20 @@ def validate_model(task: str, model: str):
 @app.post("/launch/")
 async def launch(launch: Launch):
     print("start to launch...")
-    launcher = DockerLauncher()
-    address = launcher.launch(launch.task, launch.model)
-    url = "http://" + address["8080/tcp"][0]["HostIp"] + ":" + address["8080/tcp"][0]["HostPort"]
+    if not validate_task(launch.task) or not validate_model(launch.task, launch.model):
+        return {"status": "failed", "res": {"message": "'task' or 'model' is invalidated or not support, check it again..."}}
+    
+    
+    info = launcher.launch(launch.task, launch.model)
+    url = "http://" + info["address"]["8080/tcp"][0]["HostIp"] + ":" + info["address"]["8080/tcp"][0]["HostPort"]
 
 
-    return {"status": "success", "res": {"url": url}}
+    return {"status": "success", "res": {"url": url, "id": info["id"]}}
+
+
+@app.post("/remove/")
+async def remove(remover: Remove):
+    print("start to remove...")
+    launcher.remove(remover.id)
+
+    return {"status": "success"}
