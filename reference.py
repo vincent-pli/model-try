@@ -24,16 +24,10 @@ set_seed(42)
 
 
 
-# def generate(input):
-#     txt = generator(input, max_length=30, num_return_sequences=1)
-#     return txt
-
 import gradio as gr
 
-gr.Interface.from_pipeline(generator).launch(server_port=8080)
-
-# demo = gr.Interface(fn=generate, inputs=gr.Textbox(lines=2, placeholder="Name Here..."), outputs="text", title="AI Chatbot", description="Ask anything you want", theme="compact")
-
-# demo.launch(server_port=8080) 
+instance = gr.Interface.from_pipeline(generator)
+instance.title = "测试：" + model
+instance.launch(server_port=8080)
 
 

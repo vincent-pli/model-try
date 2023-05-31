@@ -32,6 +32,7 @@ async def launch(launch: Launch):
     
     
     info = launcher.launch(launch.task, launch.model)
+    print(info)
     url = "http://" + info["address"]["8080/tcp"][0]["HostIp"] + ":" + info["address"]["8080/tcp"][0]["HostPort"]
 
 
