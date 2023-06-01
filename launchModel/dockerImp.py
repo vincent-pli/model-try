@@ -4,7 +4,7 @@ from pydantic import BaseModel
 
 class DockerLauncher(BaseModel):
 
-    def launch(self, task: str, model: str):
+    def launch(self, name: str, task: str, model: str):
         environments = {
             "task": task,
             "model": model,
@@ -16,7 +16,7 @@ class DockerLauncher(BaseModel):
 
         client = docker.from_env()
         container = client.containers.run(
-            "docker.io/vincentpli/mode-base:v0.3", detach=True, environment=environments, ports=ports, volumes = volumn)
+            name=name, image="docker.io/vincentpli/mode-base:v0.3", detach=True, environment=environments, ports=ports, volumes = volumn)
         container.reload()
         print(container.ports)
         return { "address": container.ports, "id": container.id }
@@ -30,3 +30,18 @@ class DockerLauncher(BaseModel):
             containers[0].remove(force=True)
 
         return None
+    
+    def list(self):
+        client = docker.from_env()
+        containers = client.containers.list(filters={"ancestor":"docker.io/vincentpli/mode-base:v0.3"})
+        
+        res = []
+        for container in containers:
+            res.append({
+                "name": container.name,
+                "status": container.status,
+                "port": container.ports,
+                "id": container.id,
+            })
+
+        return res

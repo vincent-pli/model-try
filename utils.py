@@ -30,13 +30,14 @@ TASKS_SUPPORTED = [
 
 from huggingface_hub import HfApi, ModelFilter
 def validate_models(task: str, model: str):
-    api = HfApi()
-    models = api.list_models(
-            filter = ModelFilter(
-            task = task,
-            model_name = model
-        )
-    )
-    return len(models) != 0
+    # api = HfApi()
+    # models = api.list_models(
+    #         filter = ModelFilter(
+    #         task = task,
+    #         model_name = model
+    #     )
+    # )
+    # return len(models) != 0
+    return True
 
 VALIDATE_MODELS = validate_models

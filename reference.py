@@ -13,6 +13,7 @@ generator = None
 
 print(model_path)
 if os.path.isdir(model_path):
+    print("loading from local, since the model is already there...")
     generator = pipeline(task, model=model_path)
 else:
     generator = pipeline(task, model=model)
